@@ -290,19 +290,10 @@ byte* des(char p[], char k[])
 		rkeygen(i);
 	}
 
+	// DES algorithm
 	IP(); 
 	for (i = 1; i < 17; i++) round(i);
 	FP();
-	printf("\nBit : ");
 
-	qword hexcipher = 0;
-	for (i = 1; i < 65; i++)
-	{
-		hexcipher = (hexcipher << 1) | cipher[i];
-		printf("%d", cipher[i]);
-		if (i % 4 == 0) printf(" ");
-	}
-	printf("\nHex : %llx\n", hexcipher);
-	printf("\n");
 	return cipher;
 }
