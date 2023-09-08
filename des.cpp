@@ -189,7 +189,7 @@ void f_function(int n)
 	f_sbox();
 	f_spbox();
 }
-void round(int n)
+void round(int n, int nr)
 {
 	int i;
 	for (i = 1; i < 33; i++)
@@ -201,7 +201,7 @@ void round(int n)
 		right[i] = block[i + 32];
 	}
 	f_function(n);
-	if (n == 16)
+	if (n == nr)
 	{
 		for (i = 1; i < 33; i++)
 		{
@@ -265,13 +265,38 @@ void rkeygen(int n) //shift and compression p-box
 		round_key[n][i] = keytmp[cpbox[i-1]];
 	}
 }
-byte* des(char p[], char k[])
+byte* des(char p[], char k[], qword pp, qword kk, int numofr)
 {
 	int i;
-
+	if(numofr < 1) return NULL;
 	// convert string to bit
-	qword input = strtoull(p, NULL, 16);
-	qword initkey = strtoull(k, NULL, 16);
+	qword input = 0, initkey = 0;
+	if(pp == 0)
+	{
+		if(p != NULL)
+		{
+			input = strtoull(p, NULL, 16);
+		}
+		else
+		{
+			printf("[syntax error] func des error!\n");
+			return NULL;
+		}
+	}
+	else input = pp;
+	if(kk == 0)
+        {
+                if(p != NULL)
+                {
+                        initkey = strtoull(k, NULL, 16);
+                }
+                else
+                {
+                        printf("[syntax error] func des error!\n");
+                        return NULL;
+                }
+        }
+	else initkey = kk;
 	for (i = 0; i < 64; i++)
 	{
 		plain[64 - i] = input & 1;
@@ -292,7 +317,7 @@ byte* des(char p[], char k[])
 
 	// DES algorithm
 	IP(); 
-	for (i = 1; i < 17; i++) round(i);
+	for (i = 1; i < numofr+1; i++) round(i, numofr);
 	FP();
 
 	return cipher;
