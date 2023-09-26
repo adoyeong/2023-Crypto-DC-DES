@@ -10,19 +10,27 @@ int main()
 
 	char p1[17] = "0123456789abcdef";
 	char p2[17] = "fedcba9876543210";
+	char ptest[17] = "85e813540f0ab405";
 	char k1[17] = "133457799bbcdff1";
 	char k2[17] = "eccba8866443200e";
 	printf("#####[ bit-by-bit complementation test ]#####\n");
 	printf("P : 0123456789abcdef, K : 133457799bbcdff1\n");
-	byte* c = des(p1, k1, 0, 0, 16);
+	byte* c = des(p1, k1, 0, 0, 16, 0);
 	for(int i=1; i<65; i++)
 	{
 		printf("%d", c[i]);
 		if(i%4==0) printf(" ");
 	}
+	byte* d = des(ptest, k1, 0, 0, 16, 1);
+	printf("\n");
+	for(int i=1; i<65; i++)
+	{
+		printf("%d", d[i]);
+		if(i%4==0) printf(" ");
+	}
 	printf("\n");
 	printf("P : fedcba9876543210, K : eccba8866443200e\n");
-	c = des(p2, k2, 0, 0, 16);
+	c = des(p2, k2, 0, 0, 16, 0);
 	for(int i=1; i<65; i++)
 	{
 		printf("%d", c[i]);
@@ -44,12 +52,12 @@ int main()
 	byte c1[65], c2[65];
 	char none[2] = {0, };
 	char realkey[17] = "0000000000ef19f1";
-	c = des(p1, realkey, 0, 0, 6);
+	c = des(p1, realkey, 0, 0, 6, 0);
 	for(int i=1; i<65; i++)
 	{
 		c1[i] = c[i];
 	}
-	c = des(p2, realkey, 0, 0, 6);
+	c = des(p2, realkey, 0, 0, 6, 0);
 	for(int i=1; i<65; i++)
 	{
 		c2[i] = c[i];
@@ -61,7 +69,7 @@ int main()
 		flag1 = 0;
 		flag2 = 0;
 		key = key + 0x02;
-		test = des(p1, none, 0, key, 6);
+		test = des(p1, none, 0, key, 6, 0);
 		for(int i=1; i<65; i++)
 		{
 			if(c1[i] != test[i]) flag1 = 1;
