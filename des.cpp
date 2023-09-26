@@ -114,6 +114,7 @@ byte cpbox[48] =
 46, 42, 50, 36, 29, 32
 };
 byte shift[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
+byte shift_de[16] = { 0, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
 byte plain[65];
 byte block[65];
 byte cipher[65];
@@ -226,7 +227,7 @@ void pbdrop()
 		keytmp[i + 1] = key[pbd[i]];
 	}
 }
-void rkeygen(int n) //shift and compression p-box
+void rkeygen(int n, int enorde) //shift and compression p-box
 {
 	int i;
 	//shift
@@ -258,14 +259,56 @@ void rkeygen(int n) //shift and compression p-box
 		keytmp[55] = mem1;
 		keytmp[56] = mem2;
 	}
-
-	//compression
-	for (i = 1; i < 49; i++)
+	/*
+	else
 	{
-		round_key[n][i] = keytmp[cpbox[i-1]];
+		//shift
+                byte mem1, mem2, move;
+                move = shift_de[n - 1];
+                //left
+                mem1 = keytmp[28];
+                if (move == 2) mem2 = keytmp[27];
+                for (i = 28 - move; i > 0; i--)
+                {
+                        keytmp[i + move] = keytmp[i];
+                }
+                if (move == 1) keytmp[1] = mem1;
+                else
+                {
+                        keytmp[2] = mem1;
+                        keytmp[1] = mem2;
+                }
+                //right
+                mem1 = keytmp[56];
+                if (move == 2) mem2 = keytmp[55];
+                for (i = 56 - move; i > 28 ; i--)
+                {
+                        keytmp[i + move] = keytmp[i];
+                }
+                if (move == 1) keytmp[29] = mem1;
+                else
+                {
+                        keytmp[30] = mem1;
+                        keytmp[29] = mem2;
+                }
+	}*/
+	//compression
+	if(enorde == 1)
+	{
+		for(i=1; i<49; i++)
+		{
+			round_key[17-n][i] = keytmp[cpbox[i-1]];
+		}
+	}
+	else
+	{
+		for (i = 1; i < 49; i++)
+		{
+			round_key[n][i] = keytmp[cpbox[i-1]];
+		}
 	}
 }
-byte* des(char p[], char k[], qword pp, qword kk, int numofr)
+byte* des(char p[], char k[], qword pp, qword kk, int numofr, int enorde)
 {
 	int i;
 	if(numofr < 1) return NULL;
@@ -312,7 +355,7 @@ byte* des(char p[], char k[], qword pp, qword kk, int numofr)
 	pbdrop(); 
 	for (i = 1; i < 17; i++)
 	{
-		rkeygen(i);
+		rkeygen(i, enorde);
 	}
 
 	// DES algorithm
