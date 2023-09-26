@@ -3,5 +3,5 @@
 #include <stdio.h>
 typedef unsigned char byte;
 typedef unsigned long long qword;
-byte* des(char a[], char b[], qword aa, qword bb, int c);
+byte* des(char a[], char b[], qword aa, qword bb, int c, int d);
 #endif
